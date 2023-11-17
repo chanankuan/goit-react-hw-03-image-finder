@@ -1,0 +1,10 @@
+.Gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 350px));
+  justify-content: center;
+  gap: 20px;
+  // max-width: 1548px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  margin-bottom: 40px;
+}
