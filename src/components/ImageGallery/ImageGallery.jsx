@@ -12,8 +12,7 @@ class ImageGallery extends Component {
           <ImageGalleryItem
             key={image.id}
             id={image.id}
-            thumbnail={image.webformatURL}
-            imageUrl={image.fullHDURL}
+            previewURL={image.webformatURL}
             tags={image.tags}
             onOpenModal={onOpenModal}
           />

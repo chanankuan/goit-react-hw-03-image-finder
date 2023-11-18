@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { AnimatePresence } from 'framer-motion';
 
 import { getImages } from 'api/Images';
 import Searchbar from '../Searchbar/Searchbar';
@@ -91,20 +92,25 @@ class App extends Component {
     return (
       <>
         <Searchbar onSubmit={this.onSubmit} />
+
         {images?.length > 0 && (
           <ImageGallery images={images} onOpenModal={this.openModal} />
         )}
+
         {loadMore && (
           <Button onLoadMore={this.onLoadMore} page={page}>
             Load more
           </Button>
         )}
 
-        {images?.length === 0 && query && <NoResult />}
+        {images?.length === 0 && query && !isLoading && <NoResult />}
         {isLoading && <Loader />}
-        {showModal && (
-          <Modal imageUrl={modalImageUrl} onClose={this.closeModal} />
-        )}
+
+        <AnimatePresence>
+          {showModal && (
+            <Modal imageUrl={modalImageUrl} onClose={this.closeModal} />
+          )}
+        </AnimatePresence>
       </>
     );
   }

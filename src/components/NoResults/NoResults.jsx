@@ -27,7 +27,9 @@ class NoResult extends Component {
   render() {
     // this.audio.play();
     return (
-      <h1>abc</h1>
+      <h1 style={{ textAlign: 'center' }}>
+        No results. Please try another search
+      </h1>
       // <>
       //   <div
       //     style={{
