@@ -14,7 +14,7 @@ class Modal extends Component {
   }
 
   handleClose = event => {
-    if (event.code === 'Escape' || event.currentTarget === event) {
+    if (event.code === 'Escape' || event.currentTarget === event.target) {
       this.props.onClose();
     }
   };

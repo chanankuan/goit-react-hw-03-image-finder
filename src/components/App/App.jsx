@@ -102,14 +102,9 @@ class App extends Component {
 
         {images?.length === 0 && query && <NoResult />}
         {isLoading && <Loader />}
-        {/* {showModal && (
+        {showModal && (
           <Modal imageUrl={modalImageUrl} onClose={this.closeModal} />
-        )} */}
-        <Modal
-          imageUrl={modalImageUrl}
-          onClose={this.closeModal}
-          showModal={showModal}
-        />
+        )}
       </>
     );
   }
