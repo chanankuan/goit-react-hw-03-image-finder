@@ -4,34 +4,40 @@ import { getImages } from 'api/Images';
 import Searchbar from '../Searchbar/Searchbar';
 import ImageGallery from 'components/ImageGallery/ImageGallery';
 import Button from 'components/Buton/Button';
+import Loader from 'components/Loader/Loader';
+import NoResult from 'components/NoResults/NoResults';
+import Modal from 'components/Modal/Modal';
 
 class App extends Component {
-  state = {
+  initialState = {
     images: [],
     page: 1,
     query: '',
     error: '',
     isLoading: false,
     loadMore: false,
+    showModal: false,
+    modalImageUrl: '',
   };
 
+  state = { ...this.initialState };
+
   componentDidUpdate(_, prevState) {
-    if (
-      prevState.query !== this.state.query ||
-      prevState.page !== this.state.page
-    ) {
-      this.handleSearch(this.state.query, this.state.page);
+    const { query, page } = this.state;
+
+    if (prevState.query !== query || prevState.page !== page) {
+      this.handleSearch();
     }
   }
 
   onSubmit = query => {
+    if (this.state.query === query) {
+      return;
+    }
+
     this.setState({
-      images: [],
-      page: 1,
+      ...this.initialState,
       query: query,
-      error: '',
-      isLoading: false,
-      loadMore: false,
     });
   };
 
@@ -39,12 +45,11 @@ class App extends Component {
     this.setState({ page: page });
   };
 
-  handleSearch = async (query, page) => {
+  handleSearch = async () => {
     try {
       this.setState({ isLoading: true });
 
-      const { data } = await getImages(query, page);
-      console.log(data.totalHits);
+      const { data } = await getImages(this.state.query, this.state.page);
       this.setState(prevState => ({
         images: [...prevState.images, ...data.hits],
         loadMore: this.state.page < Math.ceil(data.totalHits / 12),
@@ -56,20 +61,55 @@ class App extends Component {
     }
   };
 
+  openModal = id => {
+    const imageUrl = this.state.images.filter(image => image.id === id)[0]
+      .largeImageURL;
+
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
+      modalImageUrl: imageUrl,
+    }));
+  };
+
+  closeModal = () => {
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
+    }));
+  };
+
   render() {
-    const { isLoading, images, page, loadMore } = this.state;
+    const {
+      isLoading,
+      query,
+      images,
+      page,
+      loadMore,
+      showModal,
+      modalImageUrl,
+    } = this.state;
+
     return (
       <>
         <Searchbar onSubmit={this.onSubmit} />
-        {images?.length > 0 && <ImageGallery images={images} />}
+        {images?.length > 0 && (
+          <ImageGallery images={images} onOpenModal={this.openModal} />
+        )}
         {loadMore && (
           <Button onLoadMore={this.onLoadMore} page={page}>
             Load more
           </Button>
         )}
 
-        {/* {images?.length === 0 && <h1>No images found</h1>} */}
-        {isLoading && <h1>Loading...</h1>}
+        {images?.length === 0 && query && <NoResult />}
+        {isLoading && <Loader />}
+        {/* {showModal && (
+          <Modal imageUrl={modalImageUrl} onClose={this.closeModal} />
+        )} */}
+        <Modal
+          imageUrl={modalImageUrl}
+          onClose={this.closeModal}
+          showModal={showModal}
+        />
       </>
     );
   }

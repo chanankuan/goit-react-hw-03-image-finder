@@ -1,0 +1,29 @@
+.Overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #00000050;
+  z-index: 999;
+  transition: width 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    height 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.Hidden {
+    width: 0;
+    height: 0;
+  }
+}
+
+.Modal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vmin;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
