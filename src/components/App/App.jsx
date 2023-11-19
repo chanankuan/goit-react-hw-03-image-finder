@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 import { getImages } from 'api/Images';
 import Searchbar from '../Searchbar/Searchbar';
@@ -13,8 +14,7 @@ class App extends Component {
   initialState = {
     images: [],
     page: 1,
-    query: '',
-    error: '',
+    query: null,
     isLoading: false,
     loadMore: false,
     showModal: false,
@@ -47,18 +47,33 @@ class App extends Component {
   };
 
   handleSearch = async () => {
+    const { query, page } = this.state;
+
     try {
       this.setState({ isLoading: true });
 
-      const { data } = await getImages(this.state.query, this.state.page);
+      const { data } = await getImages(query, page);
+
+      if (data.totalHits === 0) {
+        Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+        this.setState({ isLoading: false });
+        return;
+      }
+
+      if (page === 1) {
+        Notify.success(`Hooray! We found ${data.totalHits} images.`);
+      }
+
       this.setState(prevState => ({
         images: [...prevState.images, ...data.hits],
-        loadMore: this.state.page < Math.ceil(data.totalHits / 12),
+        loadMore: page < Math.ceil(data.totalHits / 12),
         isLoading: false,
       }));
     } catch (error) {
-      console.log(error);
-      this.setState({ error: error, isLoading: false });
+      Notify.failure(error);
+      this.setState({ isLoading: false });
     }
   };
 
@@ -104,6 +119,7 @@ class App extends Component {
         )}
 
         {images?.length === 0 && query && !isLoading && <NoResult />}
+        {/* <NoResult /> */}
         {isLoading && <Loader />}
 
         <AnimatePresence>
