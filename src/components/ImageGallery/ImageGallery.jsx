@@ -11,9 +11,7 @@ class ImageGallery extends Component {
         {images.map(image => (
           <ImageGalleryItem
             key={image.id}
-            id={image.id}
-            previewURL={image.webformatURL}
-            tags={image.tags}
+            image={image}
             onOpenModal={onOpenModal}
           />
         ))}

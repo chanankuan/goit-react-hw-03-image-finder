@@ -31,20 +31,19 @@ class Modal extends Component {
 
   modal = {
     hidden: {
-      // scale: 0,
       y: '-100vh',
     },
     visible: {
-      // scale: 1,
       y: '0',
     },
     exit: {
-      // scale: 0,
       y: '100vh',
     },
   };
 
   render() {
+    const { imageUrl, tags } = this.props;
+
     return createPortal(
       <motion.div
         initial={{ opacity: 0 }}
@@ -62,8 +61,8 @@ class Modal extends Component {
         >
           {!this.state.image && <Loader className={styles.Loader} />}
           <img
-            src={this.props.imageUrl}
-            alt="hello"
+            src={imageUrl}
+            alt={tags}
             loading="lazy"
             onLoad={this.handleImageLoaded}
           />

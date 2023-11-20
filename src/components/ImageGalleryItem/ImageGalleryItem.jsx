@@ -4,7 +4,8 @@ import styles from './ImageGalleryItem.module.scss';
 
 class ImageGalleryItem extends Component {
   render() {
-    const { id, previewURL, tags, onOpenModal } = this.props;
+    const { image, onOpenModal } = this.props;
+
     return (
       <>
         <motion.li
@@ -12,9 +13,9 @@ class ImageGalleryItem extends Component {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           className={styles.GalleryItem}
-          onClick={() => onOpenModal(id)}
+          onClick={() => onOpenModal(image.largeImageURL)}
         >
-          <img src={previewURL} alt={tags} />
+          <img src={image.webformatURL} alt={image.tags} />
         </motion.li>
       </>
     );

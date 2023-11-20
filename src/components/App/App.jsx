@@ -19,6 +19,7 @@ class App extends Component {
     loadMore: false,
     showModal: false,
     modalImageUrl: '',
+    modalImageTags: '',
   };
 
   state = { ...this.initialState };
@@ -42,8 +43,8 @@ class App extends Component {
     });
   };
 
-  onLoadMore = page => {
-    this.setState({ page: page });
+  onLoadMore = () => {
+    this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
   handleSearch = async () => {
@@ -58,7 +59,6 @@ class App extends Component {
         Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
         );
-        this.setState({ isLoading: false });
         return;
       }
 
@@ -69,21 +69,19 @@ class App extends Component {
       this.setState(prevState => ({
         images: [...prevState.images, ...data.hits],
         loadMore: page < Math.ceil(data.totalHits / 12),
-        isLoading: false,
       }));
     } catch (error) {
       Notify.failure(error);
+    } finally {
       this.setState({ isLoading: false });
     }
   };
 
-  openModal = id => {
-    const imageUrl = this.state.images.filter(image => image.id === id)[0]
-      .largeImageURL;
-
+  openModal = (url, tags) => {
     this.setState(({ showModal }) => ({
       showModal: !showModal,
-      modalImageUrl: imageUrl,
+      modalImageUrl: url,
+      modalImageTags: tags,
     }));
   };
 
@@ -98,10 +96,10 @@ class App extends Component {
       isLoading,
       query,
       images,
-      page,
       loadMore,
       showModal,
       modalImageUrl,
+      modalImageTags,
     } = this.state;
 
     return (
@@ -112,19 +110,18 @@ class App extends Component {
           <ImageGallery images={images} onOpenModal={this.openModal} />
         )}
 
-        {loadMore && (
-          <Button onLoadMore={this.onLoadMore} page={page}>
-            Load more
-          </Button>
-        )}
+        {loadMore && <Button onLoadMore={this.onLoadMore}>Load more</Button>}
 
         {images?.length === 0 && query && !isLoading && <NoResult />}
-        {/* <NoResult /> */}
         {isLoading && <Loader />}
 
         <AnimatePresence>
           {showModal && (
-            <Modal imageUrl={modalImageUrl} onClose={this.closeModal} />
+            <Modal
+              imageUrl={modalImageUrl}
+              tags={modalImageTags}
+              onClose={this.closeModal}
+            />
           )}
         </AnimatePresence>
       </>

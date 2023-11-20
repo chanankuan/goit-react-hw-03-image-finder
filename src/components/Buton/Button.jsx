@@ -4,7 +4,7 @@ import styles from './Button.module.scss';
 
 class Button extends Component {
   render() {
-    const { children, onLoadMore, page } = this.props;
+    const { children, onLoadMore } = this.props;
 
     return (
       <motion.button
@@ -12,7 +12,7 @@ class Button extends Component {
         whileTap={{ scale: 0.9 }}
         type="button"
         className={styles.Button}
-        onClick={() => onLoadMore(page + 1)}
+        onClick={onLoadMore}
       >
         {children}
       </motion.button>
